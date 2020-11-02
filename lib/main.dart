@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:quizzler_flutter/models/questions.dart';
+import 'package:quizzler_flutter/models/data.dart';
 
 void main() => runApp(Quizzler());
 
@@ -6,6 +8,7 @@ class Quizzler extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       home: Scaffold(
         backgroundColor: Colors.grey.shade900,
         body: SafeArea(
@@ -25,22 +28,40 @@ class QuizPage extends StatefulWidget {
 }
 
 class _QuizPageState extends State<QuizPage> {
-  List<Icon> scoreKeeper=[
-    Icon(Icons.check,
-
-    color: Colors.green,),
-    Icon(Icons.close,
+  List<Icon> scoreKeeper = [
+    Icon(
+      Icons.check,
+      color: Colors.green,
+    ),
+    Icon(
+      Icons.close,
       color: Colors.red,
     ),
-
   ];
 
-  List <String>  questions =[
-    'A slug\'s blood is green.',
-    'Approximately one quarter of human bones are in the feet.',
-    'You can lead a cow down stairs but not up stairs.',
-  ]
-  ;
+  //
+  Question questionOne = Question(
+    questionText: 'You can lead a cow down stairs but not up stairs.',
+    questionAnswer: false,
+  );
+
+  // List<String> questions = [
+  //   'A slug\'s blood is green.',
+  //   'Approximately one quarter of human bones are in the feet.',
+  //   'You can lead a cow down stairs but not up stairs.',
+  // ];
+  //
+  //
+  // List<bool> answers = [false, true, true];
+  // QuestionBanks QuestionBanks();
+  // List<String> questionBank=[
+  //  (q1:'You can lead a cow down stairs but not up stairs.', a:false),
+  //  (q:'Approximately one quarter of human bones are in the feet.', a:true),
+  //   (q:'A slug\'s blood is green.', a:true),
+  // ];
+
+  int questionTracker = 0;
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -53,7 +74,7 @@ class _QuizPageState extends State<QuizPage> {
             padding: EdgeInsets.all(10.0),
             child: Center(
               child: Text(
-               questions.first,
+                questionOne.questionText,
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 25.0,
@@ -78,9 +99,11 @@ class _QuizPageState extends State<QuizPage> {
               ),
               onPressed: () {
                 //The user picked true.
-                if (questions.first != null){
+                bool correctAnswer = questionOne.questionAnswer;
+
+                if (correctAnswer == true) {
                   setState(() {
-                    // questions ++;
+                    questionTracker++;
                   });
                 }
               },
@@ -101,16 +124,17 @@ class _QuizPageState extends State<QuizPage> {
               ),
               onPressed: () {
                 //The user picked false.
+                bool correctAnswer = questionOne.questionAnswer;
+                if (correctAnswer == false) {
+                  setState(() {
+                    questionTracker++;
+                  });
+                }
               },
             ),
           ),
         ),
-        Row(
-          children: scoreKeeper
-        ),
-
-
-
+        Row(children: scoreKeeper),
       ],
     );
   }
