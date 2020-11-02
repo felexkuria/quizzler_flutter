@@ -39,11 +39,12 @@ class _QuizPageState extends State<QuizPage> {
     ),
   ];
 
-  //
-  Question questionOne = Question(
-    questionText: 'You can lead a cow down stairs but not up stairs.',
-    questionAnswer: false,
-  );
+  // Adding Question Class using a constructor
+  // Question questionOne = Question(
+  //   questionText: 'You can lead a cow down stairs but not up stairs.',
+  //   questionAnswer: false,
+  // );
+  QuestionBank _questionBank = QuestionBank();
 
   // List<String> questions = [
   //   'A slug\'s blood is green.',
@@ -74,7 +75,7 @@ class _QuizPageState extends State<QuizPage> {
             padding: EdgeInsets.all(10.0),
             child: Center(
               child: Text(
-                questionOne.questionText,
+                _questionBank.getQuestionText(questionTracker),
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 25.0,
@@ -99,11 +100,13 @@ class _QuizPageState extends State<QuizPage> {
               ),
               onPressed: () {
                 //The user picked true.
-                bool correctAnswer = questionOne.questionAnswer;
+                bool correctAnswer
+                = _questionBank.questionAnswer[questionTracker];
 
                 if (correctAnswer == true) {
                   setState(() {
                     questionTracker++;
+                    print('Answer is True!!! $questionTracker');
                   });
                 }
               },
@@ -124,10 +127,12 @@ class _QuizPageState extends State<QuizPage> {
               ),
               onPressed: () {
                 //The user picked false.
-                bool correctAnswer = questionOne.questionAnswer;
+                bool correctAnswer = _questionBank
+                    .questionAnswer[questionTracker];
                 if (correctAnswer == false) {
                   setState(() {
                     questionTracker++;
+                    print('Answer is true!!!+ $questionTracker');
                   });
                 }
               },
