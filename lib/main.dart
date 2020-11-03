@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:quizzler_flutter/models/questions.dart';
 import 'package:quizzler_flutter/models/data.dart';
+import 'package:rflutter_alert/rflutter_alert.dart';
 
 void main() => runApp(Quizzler());
 
@@ -28,22 +29,62 @@ class QuizPage extends StatefulWidget {
 }
 
 class _QuizPageState extends State<QuizPage> {
-  List<Icon> scoreKeeper = [
-    Icon(
-      Icons.check,
-      color: Colors.green,
-    ),
-    Icon(
-      Icons.close,
-      color: Colors.red,
-    ),
-  ];
+  void checkAnswer(bool userPickedAnswer) {
+    bool correctAnswer = _questionBank.getCorrectAnswer();
 
-  // Adding Question Class using a constructor
-  // Question questionOne = Question(
-  //   questionText: 'You can lead a cow down stairs but not up stairs.',
-  //   questionAnswer: false,
-  // );
+    setState(() {
+      //TODO: Step 4 - Use IF/ELSE to check if we've reached the end of the quiz. If so,
+      //On the next line, you can also use if (quizBrain.isFinished()) {}, it does the same thing.
+      if (_questionBank.isFinished() == true) {
+        //TODO Step 4 Part A - show an alert using rFlutter_alert,
+
+        //This is the code for the basic alert from the docs for rFlutter Alert:
+        //Alert(context: context, title: "RFLUTTER", desc: "Flutter is awesome.").show();
+
+        //Modified for our purposes:
+
+        Alert(
+          context: context,
+          type: AlertType.success,
+          title: 'Finished!',
+          desc: 'You\'ve reached the end of the quiz.',
+          buttons: [
+            DialogButton(
+              child: Text(
+                "TRY AGAIN ",
+                style: TextStyle(color: Colors.white, fontSize: 20),
+              ),
+              onPressed: () => Navigator.pop(context),
+              width: 120,
+            )
+          ],
+        ).show();
+
+        //TODO Step 4 Part C - reset the questionNumber,
+        _questionBank.reset();
+
+        //TODO Step 4 Part D - empty out the scoreKeeper.
+        _questionBank.scoreKeeper = [];
+      }
+
+      //TODO: Step 6 - If we've not reached the end, ELSE do the answer checking steps below 👇
+      else {
+        if (userPickedAnswer == correctAnswer) {
+          _questionBank.scoreKeeper.add(Icon(
+            Icons.check,
+            color: Colors.green,
+          ));
+        } else {
+          _questionBank.scoreKeeper.add(Icon(
+            Icons.close,
+            color: Colors.red,
+          ));
+        }
+        _questionBank.nextQuestion();
+      }
+    });
+  }
+
   QuestionBank _questionBank = QuestionBank();
 
   // List<String> questions = [
@@ -61,8 +102,6 @@ class _QuizPageState extends State<QuizPage> {
   //   (q:'A slug\'s blood is green.', a:true),
   // ];
 
-  int questionTracker = 0;
-
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -75,7 +114,7 @@ class _QuizPageState extends State<QuizPage> {
             padding: EdgeInsets.all(10.0),
             child: Center(
               child: Text(
-                _questionBank.getQuestionText(questionTracker),
+                _questionBank.getQuestionText(),
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 25.0,
@@ -100,15 +139,7 @@ class _QuizPageState extends State<QuizPage> {
               ),
               onPressed: () {
                 //The user picked true.
-                bool correctAnswer
-                = _questionBank.questionAnswer[questionTracker];
-
-                if (correctAnswer == true) {
-                  setState(() {
-                    questionTracker++;
-                    print('Answer is True!!! $questionTracker');
-                  });
-                }
+                checkAnswer(true);
               },
             ),
           ),
@@ -127,19 +158,12 @@ class _QuizPageState extends State<QuizPage> {
               ),
               onPressed: () {
                 //The user picked false.
-                bool correctAnswer = _questionBank
-                    .questionAnswer[questionTracker];
-                if (correctAnswer == false) {
-                  setState(() {
-                    questionTracker++;
-                    print('Answer is true!!!+ $questionTracker');
-                  });
-                }
+                checkAnswer(false);
               },
             ),
           ),
         ),
-        Row(children: scoreKeeper),
+        Row(children: _questionBank.scoreKeeper),
       ],
     );
   }
